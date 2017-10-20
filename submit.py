@@ -39,16 +39,21 @@ def successor(visited, length, elem):
         visited.pop()
     return arr
 
+#implementation to fetch successors of the current under processing node
 def fwd_successor(visited, check, length, elem):
     arr = []
     for i in range(elem+1, length+1):
+        #if the frwd_check bit is not 0
+        #i.e. if it is not already processed
         if check[i] != 0:
             visited.append(i)
             if (all_unique(visited)):
                 arr.append(i)
             visited.pop()
+    #returning the unique visited array
     return arr
 
+#check forward constrain for every node in check
 def update_fwd_constrain(visited, check, elem):
     length = len(visited)
 
@@ -71,8 +76,6 @@ def bt_recursive(visited, l, m):
 
     #Get the last element of visited array
     elem = visited[len(visited) - 1]
-    #elem = visited.pop()
-    #visited.append(elem)
     #Find the successor functions of visited array
     successors = successor(visited,l,elem)
     print "successors: ",successors
@@ -90,19 +93,24 @@ def bt_recursive(visited, l, m):
 
 
 def bt_fwd_recursive(visited, fwd_check, l, m):
+    #Termination condition, return if we get m order set
     if len(visited) == m:
         return visited
-    elem = visited.pop()
-    visited.append(elem)
+
+    elem = visited[len(visited) - 1]
+    #fetch forward successors
     successors = fwd_successor(visited, fwd_check, l, elem)
     print "successors: ", successors
+    #process each successor recursively for backtracking with forward checking
     for val in successors:
         check = fwd_check[:]
         check[val] = 0
+        # check forward constrain for every node in check
         check = update_fwd_constrain(visited, check, val)
         print "check: val: ",val,check
         visited.append(val)
         print "visited: ",visited
+        # recursively call backtracking with forward constraint checking for rest of the elements
         if bt_fwd_recursive(visited, check, l, m):
             return visited
         else:
@@ -131,17 +139,23 @@ def BT(L, M):
 
 #Your backtracking+Forward checking function implementation
 def FC(L, M):
-    "*** YOUR CODE HERE ***"
     visited = []
     fwd_check = []
+
+    #Initiallizing all the bits to 1
     for i in range(0,L+1):
         fwd_check.append(1)
 
     visited.append(0)
     fwd_check[0] = 0
+
+    #initiate recursive frwrd recursive checking
     ret = bt_fwd_recursive(visited, fwd_check, L, M)
+    # check if valid orders is available or not than return
+    # M value and orders array
     if len(ret) != 0:
         return M, ret
+    # if no combination of orders present return empty array
     return -1,[]
 
 #Bonus: backtracking + constraint propagation
@@ -151,9 +165,10 @@ def CP(L, M):
 
 def main():
 
-    #check for BackTracking with L = 6 and M = 4 , BT(L,M)
-    l,arr = BT(6,4)
-    # l,arr = FC(44,9)
+    #check for BackTracking for L = 6 and M = 4 , BT(L,M)
+    # l,arr = BT(6,4)
+    #check for BackTracking with Forward Checking for L = 44 and M = 9, FC(44,9)
+    l,arr = FC(44,9)
     print "arr: ",arr
 
 if __name__ == "__main__":
