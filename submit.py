@@ -164,12 +164,22 @@ def BT(L, M):
     visited.append(0)
     #Called bt_recursive to recursively find out all the order M combination
     ret = bt_recursive(visited, L, M)
-    #check if valid orders is available or not than return
-    # M value and orders array
-    if len(ret) != 0:
-        return M, ret
-    #if no combination of orders present return empty array
-    return -1,[]
+
+    #check if valid assignment is available or not
+    # If not, then return -1,[]
+    if len(ret) == 0:
+        return -1, []
+
+    # If assignment exists for the current length, then keep on checking with lower
+    # length until optimal assignment is found
+    while (len(ret) != 0):
+        L -= 1
+        visited = []
+        visited.append(0)
+        temp_ret = ret[:]
+        ret = bt_recursive(visited, L, M)
+
+    return L+1,temp_ret
 
 
 #Your backtracking+Forward checking function implementation
@@ -186,12 +196,28 @@ def FC(L, M):
 
     #initiate recursive frwrd recursive checking
     ret = bt_fwd_recursive(visited, fwd_check, L, M)
-    # check if valid orders is available or not than return
-    # M value and orders array
-    if len(ret) != 0:
-        return M, ret
-    # if no combination of orders present return empty array
-    return -1,[]
+
+    #check if valid assignment is available or not
+    # If not, then return -1,[]
+    if len(ret) == 0:
+        return -1, []
+
+    # If assignment exists for the current length, then keep on checking with lower
+    # length until optimal assignment is found
+    while (len(ret) != 0):
+        L -= 1
+        # Reassign all the variables
+        visited = []
+        fwd_check = []
+        visited.append(0)
+        # Initiallizing all the bits to 1
+        for i in range(0, L + 1):
+            fwd_check.append(1)
+        fwd_check[0] = 0
+        temp_ret = ret[:]
+        ret = bt_fwd_recursive(visited, fwd_check, L, M)
+
+    return L+1,temp_ret
 
 
 #Bonus: backtracking + constraint propagation
@@ -206,10 +232,10 @@ def main():
     # l,arr = BT(6,4)
     #check for BackTracking with Forward Checking for L = 44 and M = 9, FC(44,9)
     a = datetime.datetime.now().replace(microsecond=0)
-    l, arr = BT(1, 1)
+    l, arr = FC(45, 8)
     b = datetime.datetime.now().replace(microsecond=0)
     print "time: ",b-a
-    print "arr: ",arr
+    print "arr: ",l,arr
     print "count: ",count
 
 
